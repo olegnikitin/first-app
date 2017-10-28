@@ -12,6 +12,11 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
+    @RequestMapping(method = RequestMethod.GET, path = "/API/users")
+    public ResponseEntity<?> getUsers() {
+        return ResponseEntity.ok(userDao.findAll());
+    }
+
     @RequestMapping(method = RequestMethod.GET, path = "/API/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable Integer id) {
         User user = userDao.findOne(id);
@@ -29,7 +34,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/API/users/{id}")
-    public ResponseEntity<User> deleteUser(@RequestParam Integer id) {
+    public ResponseEntity<User> deleteUser(@PathVariable Integer id) {
         if (userDao.exists(id)) {
             userDao.delete(id);
             return ResponseEntity.ok().build();
