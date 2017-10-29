@@ -3,14 +3,24 @@ package com.firstproject.rest;
 import com.firstproject.dao.UserDao;
 import com.firstproject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.cors.CorsConfiguration;
 
+import javax.servlet.http.HttpServletResponse;
+
+@CrossOrigin(origins = CorsConfiguration.ALL)
 @RestController
 public class UserController {
 
     @Autowired
     private UserDao userDao;
+
+    @RequestMapping(method = RequestMethod.GET, path = "/API/users/create")//just for filling
+    public ResponseEntity<User> createMock() {
+        return ResponseEntity.ok(userDao.save(new User("test", "email", "+38099999999")));
+    }
 
     @RequestMapping(method = RequestMethod.GET, path = "/API/users")
     public ResponseEntity<?> getUsers() {
@@ -41,5 +51,11 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @RequestMapping(value = "/API/users", method = RequestMethod.OPTIONS)
+    public ResponseEntity options(HttpServletResponse response) {
+        response.setHeader("Allow", "GET,PUT,POST,DELETE,OPTIONS");
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
